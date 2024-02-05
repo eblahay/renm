@@ -57,7 +57,7 @@ int main(int argc, char* argv[]){
         }
         
         //
-        std::vector<std::filesystem::path> paths;
+        std::vector<fs::path> paths;
         if(vm.count("source")){
             /*
                 This is a work-around for what I assume is an error in
