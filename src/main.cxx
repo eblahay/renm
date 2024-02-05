@@ -17,6 +17,7 @@
 */
 
 #include <boost/program_options/value_semantic.hpp>
+#include <ios>
 #include <iostream>
 #include <stdexcept>
 #include <filesystem>
@@ -34,12 +35,15 @@ int main(int argc, char* argv[]){
         cmdln_opts.add_options()
             ("help,h", "prints this message")
             ("version", "prints program version information")
-			("regex", po::value<std::regex>(), "The regex pattern to be used on the target")
-			("target", po::value<fs::path>(), "The path upon which regex will be used to rename")
+			("regex", po::value<std::string>(), "The regex pattern to be used on the target")
+			("source", po::value<std::vector<std::string>>(), "The path(s) upon which regex will be used to rename")
         ;
 
+         po::positional_options_description p;
+        p.add("source", -1);
+
         po::variables_map vm;
-        po::store(po::command_line_parser(argc, argv).options(cmdln_opts).run(), vm);
+        po::store(po::command_line_parser(argc, argv).options(cmdln_opts).positional(p).run(), vm);
         po::notify(vm);
 
         // handle run & done modes
@@ -52,7 +56,27 @@ int main(int argc, char* argv[]){
             return 0;
         }
         
+        //
+        std::vector<std::filesystem::path> paths;
+        if(vm.count("source")){
+            /*
+                This is a work-around for what I assume is an error in
+                boost::program_options version 1.74.0, where std::filesystem::path (unlike std::string)
+                does not have a parsing operation capable of handling arguments which have spaces.
+            */
+
+            auto arr = vm["source"].as<std::vector<std::string>>();
+            for(auto it = arr.begin(); it != arr.end(); it++){
+                paths.push_back({*it});
+            }
+        }
+
         // main mode; body
+        std::regex regex(vm["regex"].as<std::string>());
+
+        for (auto it = paths.begin(); it != paths.end(); it++){
+            std::cout << *it << ": " << std::boolalpha << std::regex_match(it->string(), regex) << '\n';
+        }
 
 		return 0;
 	}
