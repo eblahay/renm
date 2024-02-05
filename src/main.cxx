@@ -16,9 +16,11 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#include <boost/program_options/value_semantic.hpp>
 #include <iostream>
 #include <stdexcept>
 #include <filesystem>
+#include <regex>
 
 #include <boost/program_options.hpp>
 
@@ -32,6 +34,8 @@ int main(int argc, char* argv[]){
         cmdln_opts.add_options()
             ("help,h", "prints this message")
             ("version", "prints program version information")
+			("regex", po::value<std::regex>(), "The regex pattern to be used on the target")
+			("target", po::value<fs::path>(), "The path upon which regex will be used to rename")
         ;
 
         po::variables_map vm;
