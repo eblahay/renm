@@ -36,6 +36,7 @@ int main(int argc, char* argv[]){
             ("help,h", "prints this message")
             ("version", "prints program version information")
 			("regex", po::value<std::string>(), "The regex pattern to be used on the target")
+            ("format", po::value<std::string>(), "The string which dictates the format for the text which will replace the text matched by the regex")
 			("source", po::value<std::vector<std::string>>(), "The path(s) upon which regex will be used to rename")
         ;
 
@@ -75,7 +76,7 @@ int main(int argc, char* argv[]){
         std::regex regex(vm["regex"].as<std::string>());
 
         for (auto it = paths.begin(); it != paths.end(); it++){
-            std::cout << *it << ": " << std::boolalpha << std::regex_match(it->string(), regex) << '\n';
+            std::cout << *it << " -> " << std::regex_replace(it->string(), regex, vm["format"].as<std::string>()) << '\n';
         }
 
 		return 0;
