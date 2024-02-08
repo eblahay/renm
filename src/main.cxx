@@ -17,6 +17,7 @@
 */
 
 #include <boost/program_options/value_semantic.hpp>
+#include <cerrno>
 #include <ios>
 #include <iostream>
 #include <stdexcept>
@@ -38,9 +39,12 @@ int main(int argc, char* argv[]){
 			("regex", po::value<std::string>(), "The regex pattern to be used on the target")
             ("format", po::value<std::string>(), "The string which dictates the format for the text which will replace the text matched by the regex")
 			("source", po::value<std::vector<std::string>>(), "The path(s) upon which regex will be used to rename")
+            ("force,f", "enable overwriting of existing files")
         ;
 
          po::positional_options_description p;
+        p.add("regex", 1);
+        p.add("format", 1);
         p.add("source", -1);
 
         po::variables_map vm;
@@ -49,7 +53,12 @@ int main(int argc, char* argv[]){
 
         // handle run & done modes
         if(vm.count("help")){
-            std::cout << cmdln_opts << '\n';
+            std::cout 
+                << "Usage: " << program_invocation_short_name << " REGEX FORMAT FILE...\n"
+                << '\n'
+                << cmdln_opts
+                << '\n'
+            ;
             return 0;
         }
         else if(vm.count("version")){
@@ -76,7 +85,8 @@ int main(int argc, char* argv[]){
         std::regex regex(vm["regex"].as<std::string>());
 
         for (auto it = paths.begin(); it != paths.end(); it++){
-            std::cout << *it << " -> " << std::regex_replace(it->string(), regex, vm["format"].as<std::string>()) << '\n';
+            fs::path dest = std::regex_replace(it->string(), regex, vm["format"].as<std::string>());
+            std::cout << *it << " -> " << dest << '\n';
         }
 
 		return 0;

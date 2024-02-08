@@ -2,3 +2,5 @@
 .cache
 build
 bin
+
+test/build
