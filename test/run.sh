@@ -31,16 +31,23 @@ echo "app: $APP"
 cd build
 
 # make test files
-touch apple.txt orange.txt grape.txt 
+farr=('apple' 'orange' 'grape')
+for f in "${farr[@]}"; do
+    echo "This file was originally called $f" > "$f"
+done
+
 printf "0:\n\t"
 ls
 echo
 
 # test renm
 echo "1:"
-$APP "^apple" orange *
-printf "\t"
-ls
+$APP "^\S*apple" orange *
+for f in *; do
+    printf "\t$f: "
+    cat "$f"
+    echo
+done
 
 # clean test
 rm *

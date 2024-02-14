@@ -86,7 +86,7 @@ int main(int argc, char* argv[]){
 
         for (auto it = paths.begin(); it != paths.end(); it++){
             fs::path dest = std::regex_replace(it->string(), regex, vm["format"].as<std::string>());
-            std::cout << *it << " -> " << dest << '\n';
+            if(vm.count("force") || !fs::exists(dest)) fs::rename(*it, dest);
         }
 
 		return 0;
