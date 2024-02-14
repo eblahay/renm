@@ -28,6 +28,7 @@ APP=$(realpath "$SCRIPT_DIR"/../build/renm)
 
 echo "app: $APP"
 
+[[ -d build ]] || mkdir build
 cd build
 
 # make test files
