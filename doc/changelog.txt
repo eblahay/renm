@@ -1,0 +1,8 @@
+0.1.0
+    Features:
+        - regex parsing
+        - file renaming base on parsed regex
+        - does not overwrite an existing file by default (can be overidden by '-f' flag)
+
+    Notes:
+        - currently handles file paths as absolute paths internally— where regex application happens; might want to change this later
